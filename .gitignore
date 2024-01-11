@@ -1,0 +1,18 @@
+# Node.js
+node_modules/
+
+# Dependency directories
+lib/
+vendor/
+
+# Debug logs and databases
+*.log
+*.sqlite
+
+# Build results
+dist/
+build/
+out/
+
+# dotenv environment file
+.env
