@@ -2,11 +2,17 @@
 
 import express from "express";
 import prismadb from "./prismadb";
+import cors from "cors";
 
 const app = express();
 const port = process.env.PORT || 5050;
 
 app.use(express.json());
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 app.get("/jobApplications", async (req, res) => {
   try {
