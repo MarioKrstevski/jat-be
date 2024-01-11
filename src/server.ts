@@ -1,7 +1,7 @@
 // src/server.ts
 
 import express from "express";
-import prismadb from "./lib/prismadb";
+import prismadb from "./lib/prismadb.ts";
 
 const app = express();
 const port = process.env.PORT || 5050;
