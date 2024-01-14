@@ -3,7 +3,7 @@
 import express from "express";
 import prismadb from "./prismadb";
 import cors from "cors";
-
+import { JobApplication as JobApplicationType } from "@prisma/client";
 const app = express();
 const port = process.env.PORT || 5050;
 
@@ -14,12 +14,39 @@ app.use(
   })
 );
 
-app.get("/jobApplications", async (req, res) => {
+app.post("/jobApplications", async (req, res) => {
+  const { userId } = req.body;
+
   try {
-    const jobApplications = await prismadb.jobApplication.findMany();
+    const jobApplications = await prismadb.jobApplication.findMany({
+      where: {
+        userId: userId,
+      },
+    });
     res.json(jobApplications);
   } catch (error) {
     console.error("Error fetching job applications:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+app.post("/createJobApplications", async (req, res) => {
+  const { jobApplications, userId } = req.body;
+
+  if (!userId) {
+    res.status(400).json({ error: "userId is required" });
+  }
+
+  try {
+    const newApplications = await prismadb.jobApplication.createMany({
+      data: jobApplications.map((ja: JobApplicationType) => ({
+        ...ja,
+        userId,
+      })),
+    });
+
+    res.json(newApplications);
+  } catch (error) {
+    console.error("Error creating job applications:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -31,7 +58,7 @@ app.post("/jobApplications", async (req, res) => {
   try {
     const newJobApplication = await prismadb.jobApplication.create({
       data: {
-        name,
+        ...req.body,
       },
     });
 

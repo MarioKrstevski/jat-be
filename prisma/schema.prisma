@@ -11,7 +11,45 @@ datasource db {
   relationMode = "prisma"
 }
 
+model Company {
+  id             String           @id @default(uuid())
+  name           String           @unique
+  description    String           @default("")
+  companyInfo    String           @default("") // Company website, location, size, etc
+  logo           String           @default("")
+  website        String           @default("")
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  JobApplication JobApplication[]
+}
+
 model JobApplication {
-  id   Int    @id @default(autoincrement())
-  name String @unique
+  userId             String
+  id                 String   @id @default(uuid())
+  isArchived         Boolean  @default(false)
+  isRemote           Boolean  @default(false)
+  wasReffered        Boolean  @default(false)
+  refferedBy         String   @default("")
+  companyId          String?
+  companyName        String
+  company            Company? @relation(fields: [companyId], references: [id])
+  companyInfo        String   @default("") // Company website, location, size, etc
+  jobPositionTitle   String
+  link               String   @default("") // Link to the job posting
+  status             String   @default("") // Applied, Interview, Offer, Rejected or the other statusOptions
+  timeline           String   @default("") // Comma separated list of Status + Date, that we will use to create a timeline
+  statusOptions      String   @default("Wishlist,Applied,OA - Online Assessment,Waiting Referral,No Response,Ghosted,Phone Screen,Coding Challenge,Take-Home Assignment,Onsite,Behavioral,Interview,Offer,Rejected,Accepted,Archived") // Comma separated list of options
+  resumeUsed         String   @default("") // Resume name or link to resume
+  motivationalLetter String   @default("") // Motvational letter or cover letter, or link to document
+  notes              String   @default("") // rich text editor experience, used for interview feedback and anything else
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  nextInterviewDate  DateTime
+  salaryDetails      String   @default("") // Salary details or negotiation-related information
+  appliedFrom        String   @default("") //where did you apply for the job (linkedin, email, etc or specific link for applying)
+  heardAboutFrom     String   @default("")
+  mapLocation        String   @default("") // Map location of the company lng,lat values
+  todos              String   @default("") // List follow-up actions or tasks related to the application as reminder
+
+  @@index([companyId])
 }
