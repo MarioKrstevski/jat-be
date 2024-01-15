@@ -37,6 +37,7 @@ model JobApplication {
   jobPositionTitle   String
   link               String   @default("") // Link to the job posting
   status             String   @default("") // Applied, Interview, Offer, Rejected or the other statusOptions
+  waitingFor         String   @default("") // The next step in the process (next status)
   timeline           String   @default("") // Comma separated list of Status + Date, that we will use to create a timeline
   statusOptions      String   @default("Wishlist,Applied,OA - Online Assessment,Waiting Referral,No Response,Ghosted,Phone Screen,Coding Challenge,Take-Home Assignment,Onsite,Behavioral,Interview,Offer,Rejected,Accepted,Archived") // Comma separated list of options
   resumeUsed         String   @default("") // Resume name or link to resume
