@@ -28,15 +28,16 @@ model JobApplication {
   id                 String   @id @default(uuid())
   isArchived         Boolean  @default(false)
   isRemote           Boolean  @default(false)
+  mapLocation        String   @default("") // Map location of the company lng,lat values
   wasReffered        Boolean  @default(false)
   refferedBy         String   @default("")
   companyId          String?
   companyName        String
   company            Company? @relation(fields: [companyId], references: [id])
   companyInfo        String   @default("") // Company website, location, size, etc
-  jobPositionTitle   String
+  jobTitle           String
   link               String   @default("") // Link to the job posting
-  adText             String   @db.LongText // Ad text or description
+  jobDescription     String   @db.LongText // Job description
   status             String   @default("") // Applied, Interview, Offer, Rejected or the other statusOptions
   waitingFor         String   @default("") // The next step in the process (next status)
   timeline           String   @default("") // Comma separated list of Status + Date, that we will use to create a timeline
@@ -47,10 +48,10 @@ model JobApplication {
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
   nextInterviewDate  DateTime
+  postedDate         DateTime // when the job was posted
   salaryDetails      String   @default("") // Salary details or negotiation-related information
   appliedFrom        String   @default("") //where did you apply for the job (linkedin, email, etc or specific link for applying)
   heardAboutFrom     String   @default("")
-  mapLocation        String   @default("") // Map location of the company lng,lat values
   todos              String   @default("") // List follow-up actions or tasks related to the application as reminder
 
   @@index([companyId])
