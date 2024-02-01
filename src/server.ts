@@ -5,6 +5,8 @@ import prismadb from "./prismadb";
 import cors from "cors";
 import { JobApplication as JobApplicationType } from "@prisma/client";
 import { EditTypes } from "./types";
+import userRoutes from "./routes/users";
+import applicationsRoutes from "./routes/applications";
 const app = express();
 const port = process.env.PORT || 5050;
 
@@ -14,6 +16,63 @@ app.use(
     origin: "*",
   })
 );
+
+app.use("/users", userRoutes);
+app.use("/applications", applicationsRoutes);
+app.patch("/applications2/archive", async (req, res) => {
+  const { ids, isArchived, userId } = req.body;
+
+  if (!userId) {
+    res.status(400).json({ error: "userId is required" });
+  }
+
+  if (!ids) {
+    res.status(400).json({ error: "Id is missing" });
+  }
+
+  if (
+    !Array.isArray(ids) &&
+    ids.any((id: string) => typeof id !== "string")
+  ) {
+    res
+      .status(400)
+      .json({ error: "Ids must be an array of strings" });
+  }
+
+  if (ids.length === 0) {
+    res.status(400).json({ error: "Ids array must not be empty" });
+  }
+
+  if (ids.length === 1) {
+    console.log("We are archiving one job application");
+  } else if (ids.length > 1) {
+    console.log(
+      "We are archiving multiple job applications - " + ids.length
+    );
+  }
+
+  try {
+    const archivedApplications =
+      await prismadb.jobApplication.updateMany({
+        where: {
+          id: {
+            in: ids,
+          },
+          userId: userId,
+        },
+        data: {
+          isArchived: isArchived,
+        },
+      });
+
+    console.log("archivedApplications", archivedApplications);
+
+    res.json(archivedApplications);
+  } catch (error) {
+    console.error("Error creating job application:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 app.patch("/archiveJobApplication", async (req, res) => {
   const { ids, isArchived, userId } = req.body;
 
