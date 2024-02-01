@@ -14,28 +14,82 @@ import { EditTypes } from "../types";
 
 const applications = Router();
 
-// POST /applications
 // GET /applications/:id
+// POST /applications
 // PATCH /applications/:id
 // DELETE /applications/:id
 // PATCH /applications/:id/archive
 // DELETE /applications
 // PATCH /applications/archive
 
+// CREATE APPLICATION
+// ---------------------------------------------
+
+const createApplicationSchema = z.object({
+  body: z.object({
+    userId: z.string().min(1, { message: "userId is required" }),
+    application: z.object(
+      {
+        status: z
+          .string({ required_error: "status is required" })
+          .min(1, {
+            message: "status must have at least one character",
+          }),
+        jobTitle: z
+          .string({
+            required_error: "jobTitle is required",
+          })
+          .min(1, {
+            message: "jobTitle must have at least one character",
+          }),
+        companyName: z
+          .string({
+            required_error: "companyName is required",
+          })
+          .min(1, {
+            message: "companyName must have at least one character",
+          }),
+      },
+      { required_error: "Application is required" }
+    ),
+  }),
+});
+applications.post(
+  "/",
+  zValidate(createApplicationSchema),
+  createApplication
+);
+// ---------------------------------------------
+
 // GET APPLICATIONS
 // ---------------------------------------------
-applications.get("/", getApplications);
+const getApplicationsSchema = z.object({
+  query: z.object({
+    userId: z.string().min(1, { message: "userId is required" }),
+  }),
+});
+applications.get(
+  "/",
+  zValidate(getApplicationsSchema),
+  getApplications
+);
 // ---------------------------------------------
 
 // GET APPLICATION
 // ---------------------------------------------
-applications.get("/:id", getApplication);
+const getApplicationSchema = z.object({
+  query: z.object({
+    userId: z.string().min(1, { message: "userId is required" }),
+    applicationId: z.string(),
+  }),
+});
+applications.get(
+  "/:id",
+  zValidate(getApplicationSchema),
+  getApplication
+);
 // ---------------------------------------------
 
-// CREATE APPLICATION
-// ---------------------------------------------
-applications.post("/", createApplication);
-// ---------------------------------------------
 // ARCHIVE APPLICATIONS
 // ---------------------------------------------
 const archiveApplicationsSchema = z.object({

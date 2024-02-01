@@ -10,45 +10,19 @@ export async function createApplication(
   next: NextFunction
 ) {
   // Add your implementation here
-  const { jobApplication, userId } = req.body;
+  const { application, userId } = req.body;
 
-  console.log("jobApplication", jobApplication);
-  // console.log("reqbody", req.body);
-  console.log("userId", userId);
-
-  // res.status(200).json({ message: "success" });
-  // return;
-  if (!userId) {
-    res.status(400).json({ error: "userId is required" });
-  }
-
-  if (!jobApplication) {
-    res
-      .status(400)
-      .json({ error: "Job application object is missing" });
-  }
-
-  if (!jobApplication.status) {
-    res.status(400).json({ error: "Starting status is required" });
-  }
-
-  if (!jobApplication.jobTitle) {
-    res.status(400).json({ error: "A job title is required" });
-  }
-
-  if (!jobApplication.companyName) {
-    res.status(400).json({ error: "Company name is required" });
-  }
+  console.log("Create Application " + userId);
 
   try {
     const newApplication = await prismadb.jobApplication.create({
       data: {
-        ...jobApplication,
+        ...application,
         userId,
       },
     });
 
-    console.log("newApplication", newApplication);
+    // console.log("newApplication", newApplication);
 
     res.json(newApplication);
   } catch (error) {
@@ -67,10 +41,6 @@ export async function getApplications(
 
   const { userId } = req.query;
   console.log("Get Applications " + userId);
-
-  if (!userId) {
-    return;
-  }
 
   try {
     const jobApplications = await prismadb.jobApplication.findMany({
@@ -93,10 +63,9 @@ export async function getApplication(
 ) {
   // Add your implementation here
 
-  const { userId } = req.body;
-  const { applicationId } = req.params;
+  const { applicationId, userId } = req.params;
 
-  console.log("Edit Application ID " + applicationId);
+  console.log("Get Application with ID " + applicationId);
 
   try {
     const jobApplications = await prismadb.jobApplication.findMany({
