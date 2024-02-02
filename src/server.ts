@@ -33,16 +33,15 @@ app.use(
   })
 );
 
-app.use("/users", userRoutes);
+app.use("/api/users", userRoutes);
 app.use(
-  "/applications",
+  "/api/applications",
   ClerkExpressRequireAuth({
     // ...options
   }),
   ClerkLogUserId(),
   applicationsRoutes
 );
-
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
