@@ -6,13 +6,13 @@ import { WithAuthProp } from "@clerk/clerk-sdk-node";
 // Function to handle POST /applications
 
 export async function createApplication(
-  req: Request,
+  req: WithAuthProp<Request>,
   res: Response,
   next: NextFunction
 ) {
   // Add your implementation here
-  const authReq = req as WithAuthProp<Request>;
-  const userId = authReq.auth.userId!;
+
+  const userId = req.auth.userId!;
   const { application } = req.body;
 
   console.log("Create Application " + userId);
@@ -36,13 +36,12 @@ export async function createApplication(
 
 // Function to handle GET /applications
 export async function getApplications(
-  req: Request,
+  req: WithAuthProp<Request>,
   res: Response,
   next: NextFunction
 ) {
-  const authReq = req as WithAuthProp<Request>;
-  const userId = authReq.auth.userId!;
-  console.log("Get Applications " + userId);
+  const userId = req.auth.userId!;
+  console.log("Get Applications ");
 
   try {
     const jobApplications = await prismadb.jobApplication.findMany({
@@ -59,13 +58,13 @@ export async function getApplications(
 
 // Function to handle GET /applications/:id
 export async function getApplication(
-  req: Request,
+  req: WithAuthProp<Request>,
   res: Response,
   next: NextFunction
 ) {
   // Add your implementation here
-  const authReq = req as WithAuthProp<Request>;
-  const userId = authReq.auth.userId!;
+
+  const userId = req.auth.userId!;
 
   const { applicationId } = req.params;
 
@@ -86,12 +85,11 @@ export async function getApplication(
 
 // Function to handle PATCH /applications/:id
 export async function editApplication(
-  req: Request,
+  req: WithAuthProp<Request>,
   res: Response,
   next: NextFunction
 ) {
-  const authReq = req as WithAuthProp<Request>;
-  const userId = authReq.auth.userId!;
+  const userId = req.auth.userId!;
 
   const { applicationId } = req.params;
   const {
@@ -128,13 +126,13 @@ export async function editApplication(
 
 // Function to handle PATCH /applications/archive
 export async function bulkArchiveApplications(
-  req: Request,
+  req: WithAuthProp<Request>,
   res: Response,
   next: NextFunction
 ) {
   console.log("Bulk Archive Applications");
-  const authReq = req as WithAuthProp<Request>;
-  const userId = authReq.auth.userId!;
+
+  const userId = req.auth.userId!;
   const { ids, isArchived } = req.body;
 
   if (ids.length === 1) {
@@ -168,12 +166,11 @@ export async function bulkArchiveApplications(
 
 // Function to handle DELETE /applications
 export async function bulkDeleteApplications(
-  req: Request,
+  req: WithAuthProp<Request>,
   res: Response,
   next: NextFunction
 ) {
-  const authReq = req as WithAuthProp<Request>;
-  const userId = authReq.auth.userId!;
+  const userId = req.auth.userId!;
 
   console.log("Bulk Delete Applications");
   const { ids } = req.body;
@@ -197,7 +194,7 @@ export async function bulkDeleteApplications(
         },
       });
 
-    console.log("deletedApplications", deletedApplications);
+    // console.log("deletedApplications", deletedApplications);
 
     res.json(deletedApplications);
   } catch (error) {

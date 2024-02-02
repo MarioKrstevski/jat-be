@@ -1,22 +1,30 @@
 // src/server.ts
-import "dotenv/config";
-import cors from "cors";
-import userRoutes from "./routes/users";
-import applicationsRoutes from "./routes/applications";
 import {
   ClerkExpressRequireAuth,
+  LooseAuthProp,
   WithAuthProp,
-  clerkClient,
 } from "@clerk/clerk-sdk-node";
-import express, { Application, Request, Response } from "express";
-import { validateJWT } from "./middleware/validateClearJWT";
+import cors from "cors";
+import "dotenv/config";
+import express, {
+  Application,
+  NextFunction,
+  Request,
+  Response,
+} from "express";
+import applicationsRoutes from "./routes/applications";
+import userRoutes from "./routes/users";
+import { ClerkLogUserId } from "./middleware/ClerkLogUserId.middleware";
+
+// so that WithAuthProp<Request> works correctly
+declare global {
+  namespace Express {
+    interface Request extends LooseAuthProp {}
+  }
+}
 
 const app: Application = express();
 const port = process.env.PORT || 5050;
-
-const clerk = clerkClient.users.getCount().then((count) => {
-  console.log(count);
-});
 
 app.use(express.json());
 app.use(
@@ -25,22 +33,13 @@ app.use(
   })
 );
 
-// app.get(
-//   "/protected-route",
-//   ClerkExpressRequireAuth({
-//     // ...options
-//   }),
-//   (req: RequireAuthProp<Request>, res) => {
-//     res.json(req.auth);
-//   }
-// );
-
 app.use("/users", userRoutes);
 app.use(
   "/applications",
   ClerkExpressRequireAuth({
     // ...options
   }),
+  ClerkLogUserId(),
   applicationsRoutes
 );
 
