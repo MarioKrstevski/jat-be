@@ -11,7 +11,9 @@ export async function createApplication(
   next: NextFunction
 ) {
   // Add your implementation here
-  const { application, userId } = req.body;
+  const authReq = req as WithAuthProp<Request>;
+  const userId = authReq.auth.userId!;
+  const { application } = req.body;
 
   console.log("Create Application " + userId);
 
@@ -39,7 +41,7 @@ export async function getApplications(
   next: NextFunction
 ) {
   const authReq = req as WithAuthProp<Request>;
-  const userId = authReq.auth.userId;
+  const userId = authReq.auth.userId!;
   console.log("Get Applications " + userId);
 
   try {
@@ -62,11 +64,10 @@ export async function getApplication(
   next: NextFunction
 ) {
   // Add your implementation here
+  const authReq = req as WithAuthProp<Request>;
+  const userId = authReq.auth.userId!;
 
-  //@ts-ignore
-  console.log("juzer", req.user);
-
-  const { applicationId, userId } = req.params;
+  const { applicationId } = req.params;
 
   console.log("Get Application with ID " + applicationId);
 
@@ -89,13 +90,12 @@ export async function editApplication(
   res: Response,
   next: NextFunction
 ) {
-  console.log(req.headers);
+  const authReq = req as WithAuthProp<Request>;
+  const userId = authReq.auth.userId!;
 
   const { applicationId } = req.params;
-  console.log("Edit Application ID " + applicationId);
   const {
     application,
-    userId,
     type,
   }: {
     application: any;
@@ -104,7 +104,7 @@ export async function editApplication(
     type: EditTypes;
   } = req.body;
 
-  console.log("Edit Application " + type);
+  console.log("Edit Application (" + type + ") ID " + applicationId);
 
   try {
     const edittedApplication = await prismadb.jobApplication.update({
@@ -133,8 +133,9 @@ export async function bulkArchiveApplications(
   next: NextFunction
 ) {
   console.log("Bulk Archive Applications");
-
-  const { ids, isArchived, userId } = req.body;
+  const authReq = req as WithAuthProp<Request>;
+  const userId = authReq.auth.userId!;
+  const { ids, isArchived } = req.body;
 
   if (ids.length === 1) {
     console.log("We are archiving one job application");
@@ -171,8 +172,11 @@ export async function bulkDeleteApplications(
   res: Response,
   next: NextFunction
 ) {
+  const authReq = req as WithAuthProp<Request>;
+  const userId = authReq.auth.userId!;
+
   console.log("Bulk Delete Applications");
-  const { ids, userId } = req.body;
+  const { ids } = req.body;
 
   if (ids.length === 1) {
     console.log("We are deleting one job application");

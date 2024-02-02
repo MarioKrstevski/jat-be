@@ -1,6 +1,6 @@
-import { WithAuthProp } from "@clerk/clerk-sdk-node";
 import { NextFunction, Response, Request } from "express";
 import { AnyZodObject, ZodError } from "zod";
+import { EditTypes } from "../types";
 
 export function zValidate(schema: AnyZodObject) {
   return function (req: Request, res: Response, next: NextFunction) {
@@ -22,5 +22,26 @@ export function zValidate(schema: AnyZodObject) {
         .status(500)
         .json({ error: "An unexpected error occurred" });
     }
+  };
+}
+
+export function zConditionalValidate(
+  fieldName: string,
+  decider: (type: EditTypes) => any
+) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    // Obtain the value of the specified field to decide which middleware to use
+    const fieldValue = req.body[fieldName];
+    // Determine the appropriate middleware based on the decision function
+    const schema = decider(fieldValue);
+
+    if (!schema) {
+      return res
+        .status(400)
+        .json({ error: `Invalid value for ${fieldName}` });
+    }
+
+    // Execute the determined middleware
+    return zValidate(schema)(req, res, next);
   };
 }
