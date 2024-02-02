@@ -1,8 +1,9 @@
+import { WithAuthProp } from "@clerk/clerk-sdk-node";
 import { NextFunction, Response, Request } from "express";
 import { AnyZodObject, ZodError } from "zod";
 
 export function zValidate(schema: AnyZodObject) {
-  return function (req: any, res: any, next: NextFunction) {
+  return function (req: Request, res: Response, next: NextFunction) {
     try {
       schema.parse({
         body: req.body,

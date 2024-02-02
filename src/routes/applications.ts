@@ -11,6 +11,11 @@ import {
 import { ZodError, z } from "zod";
 import { zValidate } from "../middleware/validateZodMiddleware";
 import { EditTypes } from "../types";
+import { validateJWT } from "../middleware/validateClearJWT";
+import {
+  ClerkExpressRequireAuth,
+  ClerkExpressWithAuth,
+} from "@clerk/clerk-sdk-node";
 
 const applications = Router();
 
@@ -70,7 +75,9 @@ const getApplicationsSchema = z.object({
 });
 applications.get(
   "/",
+
   zValidate(getApplicationsSchema),
+  // validateJWT,
   getApplications
 );
 // ---------------------------------------------

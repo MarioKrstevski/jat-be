@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import prismadb from "../prismadb";
 import { EditTypes } from "../types";
+import { WithAuthProp } from "@clerk/clerk-sdk-node";
 
 // Function to handle POST /applications
 
@@ -37,9 +38,8 @@ export async function getApplications(
   res: Response,
   next: NextFunction
 ) {
-  // Add your implementation here
-
-  const { userId } = req.query;
+  const authReq = req as WithAuthProp<Request>;
+  const userId = authReq.auth.userId;
   console.log("Get Applications " + userId);
 
   try {
@@ -62,6 +62,9 @@ export async function getApplication(
   next: NextFunction
 ) {
   // Add your implementation here
+
+  //@ts-ignore
+  console.log("juzer", req.user);
 
   const { applicationId, userId } = req.params;
 
@@ -86,6 +89,8 @@ export async function editApplication(
   res: Response,
   next: NextFunction
 ) {
+  console.log(req.headers);
+
   const { applicationId } = req.params;
   console.log("Edit Application ID " + applicationId);
   const {
