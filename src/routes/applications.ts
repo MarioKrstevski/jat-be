@@ -190,7 +190,6 @@ function conditional(
 
 const decider = (type: EditTypes) => {
   if (type === "allChange") {
-    console.log("allChange");
     return zValidate(allChangeSchema);
   } else if (type === "statusChange") {
     return zValidate(statusChangeSchema);
