@@ -158,7 +158,7 @@ const statusChangeSchema = z.object({
   status: z.string({ required_error: "status is required" }).min(1, {
     message: "status must have at least one character",
   }),
-  waitingFor: z.string().min(1).optional(),
+  nextStep: z.string().min(1).optional(),
   date: z.date().optional(),
 });
 
