@@ -30,6 +30,7 @@ model JobApplication {
   workMode              String    @default("In Office") // In Office, Remote, Hybrid, etc
   employmentType        String    @default("Full-time") // Full-time, Part-time, Internship, Contract, etc
   offersVisaSponsorship Boolean   @default(false)
+  isFavorite            Boolean   @default(false)
   offersRelocation      Boolean   @default(false)
   perks                 String    @default("") // Comma separated list of perks
   mapLocation           String    @default("") // Map location of the company lng,lat values
