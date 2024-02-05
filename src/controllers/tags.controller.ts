@@ -2,6 +2,7 @@ import { WithAuthProp } from "@clerk/clerk-sdk-node";
 import { NextFunction, Request, Response } from "express";
 
 import prismadb from "../prismadb";
+import { JobApplicationTags } from "@prisma/client";
 
 export async function createTag(
   req: WithAuthProp<Request>,
@@ -15,8 +16,8 @@ export async function createTag(
   try {
     const tag = await prismadb.jobApplicationTags.create({
       data: {
-        color,
-        name,
+        color: color.toUpperCase(),
+        name: name.toLowerCase(),
         userId,
       },
     });
@@ -54,9 +55,10 @@ export async function editTag(
   next: NextFunction
 ) {
   const userId = req.auth.userId!;
-  const { color, name, tagId } = req.body;
+  const { newColor, newName, originalName, tagId } = req.body;
   console.log("Edit Tag " + tagId);
 
+  // update tag in tags table
   try {
     const tag = await prismadb.jobApplicationTags.update({
       where: {
@@ -64,10 +66,56 @@ export async function editTag(
         userId: userId as string,
       },
       data: {
-        color,
-        name,
+        color: newColor.toUpperCase(),
+        name: newName.toLowerCase(),
       },
     });
+
+    // update tags in existing applications
+    // the name has changed (it is not just color change)
+    if (tag.name !== originalName) {
+      try {
+        const applications = await prismadb.jobApplication.findMany({
+          where: {
+            userId: userId as string,
+            tags: {
+              contains: originalName,
+            },
+          },
+        });
+
+        applications.forEach(async (application) => {
+          const newTags = application.tags
+            .split(",")
+            .map((t) => {
+              if (t === originalName) {
+                return newName;
+              } else {
+                return t;
+              }
+            })
+            .join(",");
+
+          await prismadb.jobApplication.update({
+            where: {
+              id: application.id,
+            },
+            data: {
+              tags: {
+                set: newTags,
+              },
+            },
+          });
+        });
+      } catch (error) {
+        console.error(
+          "Error updating new tag name for existing applications",
+          error
+        );
+        res.status(500).json({ error: "Internal Server Error" });
+      }
+    }
+
     res.json(tag);
   } catch (error) {
     console.error("Error fetching tags:", error);
@@ -81,7 +129,7 @@ export async function deleteTag(
   next: NextFunction
 ) {
   const userId = req.auth.userId!;
-  const { tagId } = req.query;
+  const { tagId, name } = req.query;
   console.log("Delete Tag " + tagId);
 
   try {
@@ -91,6 +139,46 @@ export async function deleteTag(
         id: tagId as string,
       },
     });
+
+    if (name) {
+      try {
+        const applications = await prismadb.jobApplication.findMany({
+          where: {
+            userId: userId as string,
+            tags: {
+              contains: name as string,
+            },
+          },
+        });
+
+        applications.forEach(async (application) => {
+          const newTags = application.tags
+            .split(",")
+            .filter((t) => {
+              return t !== name;
+            })
+            .join(",");
+
+          await prismadb.jobApplication.update({
+            where: {
+              id: application.id,
+            },
+            data: {
+              tags: {
+                set: newTags,
+              },
+            },
+          });
+        });
+      } catch (error) {
+        console.error(
+          "Error deleting tag for existing applications",
+          error
+        );
+        res.status(500).json({ error: "Internal Server Error" });
+      }
+    }
+
     res.json(tag);
   } catch (error) {
     console.error("Error fetching tags:", error);

@@ -12,8 +12,8 @@ async function addNewTags(
 ) {
   const newTags = tags.map((tag: string) => {
     return {
-      color: "#ffffff",
-      name: tag,
+      color: "#FFFFFF",
+      name: tag.toLowerCase(),
       userId,
     };
   });

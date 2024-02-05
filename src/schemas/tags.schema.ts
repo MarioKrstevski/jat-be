@@ -8,14 +8,16 @@ export const createTagSchema = z.object({
 });
 export const editTagSchema = z.object({
   body: z.object({
-    color: z.string(),
+    newColor: z.string(),
     tagId: z.string(),
-    name: z.string(),
+    newName: z.string(),
+    originalName: z.string(),
   }),
 });
 
 export const deleteTagSchema = z.object({
   query: z.object({
     tagId: z.string(),
+    name: z.string().optional(),
   }),
 });
