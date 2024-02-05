@@ -27,7 +27,7 @@ model JobApplicationTags {
   id     String @id @default(uuid())
   name   String @unique
   userId String
-  color  String @default("#ffffff")
+  color  String @default("#FFFFFF")
 }
 
 model JobApplication {

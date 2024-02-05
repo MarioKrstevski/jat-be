@@ -13,6 +13,7 @@ import express, {
   Response,
 } from "express";
 import applicationsRoutes from "./routes/applications";
+import tagsRoutes from "./routes/tags";
 import userRoutes from "./routes/users";
 import { ClerkLogUserId } from "./middleware/ClerkLogUserId.middleware";
 
@@ -34,6 +35,14 @@ app.use(
 );
 
 app.use("/api/users", userRoutes);
+app.use(
+  "/api/tags",
+  ClerkExpressRequireAuth({
+    // ...options
+  }),
+  ClerkLogUserId(),
+  tagsRoutes
+);
 app.use(
   "/api/applications",
   ClerkExpressRequireAuth({

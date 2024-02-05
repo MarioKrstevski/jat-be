@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import prismadb from "../prismadb";
 import { EditTypes } from "../types";
 import { WithAuthProp } from "@clerk/clerk-sdk-node";
-import e from "cors";
 
 // Function to handle POST /applications
 
