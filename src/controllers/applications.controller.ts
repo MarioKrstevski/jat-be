@@ -2,8 +2,33 @@ import { NextFunction, Request, Response } from "express";
 import prismadb from "../prismadb";
 import { EditTypes } from "../types";
 import { WithAuthProp } from "@clerk/clerk-sdk-node";
+import e from "cors";
 
 // Function to handle POST /applications
+
+async function addNewTags(
+  tags: string[],
+  userId: string,
+  res: Response
+) {
+  const newTags = tags.map((tag: string) => {
+    return {
+      color: "#ffffff",
+      name: tag,
+      userId,
+    };
+  });
+
+  try {
+    await prismadb.jobApplicationTags.createMany({
+      data: newTags,
+      skipDuplicates: true,
+    });
+  } catch (error) {
+    console.error("Error creating job application tags:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
 
 export async function createApplication(
   req: WithAuthProp<Request>,
@@ -16,6 +41,37 @@ export async function createApplication(
   const { application } = req.body;
 
   console.log("Create Application " + userId);
+
+  if (application.tags) {
+    application.tags = application.tags
+      .split(",")
+      .map((tag: string) => tag.trim().toLowerCase());
+
+    const existingTags = await prismadb.jobApplicationTags.findMany({
+      where: {
+        userId,
+      },
+    });
+
+    let newTags = [...application.tags];
+
+    //Checks to see if there are new tags to be added
+    if (existingTags.length > 0) {
+      const existingTagsArray = existingTags.map((tag) => tag.name);
+      newTags = application.tags.filter((tag: string) => {
+        if (!existingTagsArray.includes(tag)) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+    }
+    if (newTags.length > 0) {
+      addNewTags(newTags, userId, res);
+    }
+
+    application.tags = application.tags.join(",");
+  }
 
   try {
     const newApplication = await prismadb.jobApplication.create({
@@ -101,6 +157,37 @@ export async function editApplication(
     userId: string;
     type: EditTypes;
   } = req.body;
+
+  if (application.tags && type === "allChange") {
+    application.tags = application.tags
+      .split(",")
+      .map((tag: string) => tag.trim().toLowerCase());
+
+    const existingTags = await prismadb.jobApplicationTags.findMany({
+      where: {
+        userId,
+      },
+    });
+
+    let newTags = [...application.tags];
+
+    //Checks to see if there are new tags to be added
+    if (existingTags.length > 0) {
+      const existingTagsArray = existingTags.map((tag) => tag.name);
+      newTags = application.tags.filter((tag: string) => {
+        if (!existingTagsArray.includes(tag)) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+    }
+    if (newTags.length > 0) {
+      addNewTags(newTags, userId, res);
+    }
+
+    application.tags = application.tags.join(",");
+  }
 
   console.log("Edit Application (" + type + ") ID " + applicationId);
 
