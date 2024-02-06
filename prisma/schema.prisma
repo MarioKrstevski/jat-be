@@ -39,7 +39,7 @@ model JobApplication {
   offersVisaSponsorship Boolean   @default(false)
   isFavorite            Boolean   @default(false)
   offersRelocation      Boolean   @default(false)
-  perks                 String    @default("") // Comma separated list of perks
+  perks                 String    @default("") @db.VarChar(280) // Comma separated list of perks
   tags                  String    @default("") // Comma separated list of tags
   mapLocation           String    @default("") // Map location of the company lng,lat values
   wasReferred           Boolean   @default(false)
@@ -52,10 +52,10 @@ model JobApplication {
   jobLocation           String    @default("") // Job location (city, state, country) or address
   link                  String    @default("") // Link to the job posting
   applylink             String    @default("") // Link where to apply for this
-  jobDescription        String    @db.LongText // Job description
+  jobDescription        String    @db.VarChar(5000) // Job description
   status                String    @default("") // Applied, Interview, Offer, Rejected or the other statusOptions
   nextStep              String    @default("") // The next step in the process (next status)
-  timeline              String    @default("") // Comma separated list of Status + Date, that we will use to create a timeline
+  timeline              String    @default("") @db.VarChar(1000) // Comma separated list of Status + Date, that we will use to create a timeline
   statusOptions         String    @default("Wishlist,Applied,OA - Online Assessment,Waiting Referral,No Response,Ghosted,Phone Screen,Coding Challenge,Take-Home Assignment,Onsite,Behavioral,Interview,Offer,Rejected,Accepted,Archived") @db.VarChar(450) // Comma separated list of options
   resumeUsed            String    @default("") // Resume name or link to resume
   motivationalLetter    String    @default("") // Motvational letter or cover letter, or link to document
@@ -70,7 +70,8 @@ model JobApplication {
   salaryDetails         String    @default("") // Salary details or negotiation-related information
   appliedFrom           String    @default("") //where did you apply for the job (linkedin, email, etc or specific link for applying)
   heardAboutFrom        String    @default("")
-  todos                 String    @default("") // List follow-up actions or tasks related to the application as reminder
+  todos                 String    @default("") @db.VarChar(2200) // List follow-up actions or tasks related to the application as reminder
 
   @@index([companyId])
+  @@index([id])
 }

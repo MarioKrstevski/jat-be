@@ -48,6 +48,7 @@ const EditTypes = z.enum([
   "allChange",
   "nextInterviewDateChange",
   "statusChange",
+  "todosChange",
 ]);
 export const initialEditValidationSchema = z.object({
   body: z.object({
@@ -84,6 +85,13 @@ export const allChangeSchema = z.object({
   }),
 });
 
+export const todosChangeSchema = z.object({
+  body: z.object({
+    application: z.object({
+      todos: z.string(),
+    }),
+  }),
+});
 export const statusChangeSchema = z.object({
   body: z.object({
     application: z.object({
@@ -118,6 +126,8 @@ export const editSchemaDecider = (type: EditTypes) => {
     return statusChangeSchema;
   } else if (type === "nextInterviewDateChange") {
     return nextInterviewDateSchema;
+  } else if (type === "todosChange") {
+    return todosChangeSchema;
   } else {
     return null; // Or handle invalid type appropriately
   }

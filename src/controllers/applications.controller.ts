@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import prismadb from "../prismadb";
 import { EditTypes } from "../types";
 import { WithAuthProp } from "@clerk/clerk-sdk-node";
+import { generateShortId } from "../utils/lib";
 
 // Function to handle POST /applications
 
@@ -41,6 +42,7 @@ export async function createApplication(
 
   console.log("Create Application " + userId);
 
+  // handle creating tags
   if (application.tags) {
     application.tags = application.tags
       .split(",")
@@ -70,6 +72,20 @@ export async function createApplication(
     }
 
     application.tags = application.tags.join(",");
+  }
+
+  if (application.todos) {
+    application.todos = application.todos
+      .split("\n")
+      .map((todo: string) => {
+        return {
+          id: generateShortId(),
+          text: todo.trim(),
+          isCompleted: false,
+          relatedTo: "application", // related to specific status or category of statuses or not determined
+        };
+      });
+    application.todos = JSON.stringify(application.todos);
   }
 
   try {
