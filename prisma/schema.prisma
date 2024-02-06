@@ -59,7 +59,6 @@ model JobApplication {
   statusOptions         String    @default("Wishlist,Applied,OA - Online Assessment,Waiting Referral,No Response,Ghosted,Phone Screen,Coding Challenge,Take-Home Assignment,Onsite,Behavioral,Interview,Offer,Rejected,Accepted,Archived") @db.VarChar(450) // Comma separated list of options
   resumeUsed            String    @default("") // Resume name or link to resume
   motivationalLetter    String    @default("") // Motvational letter or cover letter, or link to document
-  notes                 String    @db.LongText // rich text editor experience, used for interview feedback and anything else
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
   appliedDate           DateTime? // when the job was applied
@@ -71,7 +70,20 @@ model JobApplication {
   appliedFrom           String    @default("") //where did you apply for the job (linkedin, email, etc or specific link for applying)
   heardAboutFrom        String    @default("")
   todos                 String    @default("") @db.VarChar(2200) // List follow-up actions or tasks related to the application as reminder
+  note                  Note?
 
   @@index([companyId])
   @@index([id])
+}
+
+model Note {
+  id               String          @id @default(uuid())
+  userId           String
+  content          String          @default("") @db.VarChar(3200)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  jobApplicationId String?         @unique
+  jobApplication   JobApplication? @relation(fields: [jobApplicationId], references: [id])
+
+  @@index([jobApplicationId])
 }

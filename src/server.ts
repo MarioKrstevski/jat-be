@@ -16,6 +16,7 @@ import applicationsRoutes from "./routes/applications";
 import tagsRoutes from "./routes/tags";
 import userRoutes from "./routes/users";
 import { ClerkLogUserId } from "./middleware/ClerkLogUserId.middleware";
+import notesRoutes from "./routes/notes";
 
 // so that WithAuthProp<Request> works correctly
 declare global {
@@ -43,6 +44,16 @@ app.use(
   ClerkLogUserId(),
   tagsRoutes
 );
+
+app.use(
+  "/api/notes",
+  ClerkExpressRequireAuth({
+    // ...options
+  }),
+  ClerkLogUserId(),
+  notesRoutes
+);
+
 app.use(
   "/api/applications",
   ClerkExpressRequireAuth({

@@ -89,16 +89,28 @@ export async function createApplication(
   }
 
   try {
+    const applicationWithoutNote = { ...application };
+
+    delete applicationWithoutNote.note;
     const newApplication = await prismadb.jobApplication.create({
       data: {
-        ...application,
+        ...applicationWithoutNote,
         userId,
+      },
+      include: {
+        note: true,
       },
     });
 
-    // console.log("newApplication", newApplication);
+    const newNote = await prismadb.note.create({
+      data: {
+        content: application.note,
+        userId,
+        jobApplicationId: newApplication.id,
+      },
+    });
 
-    res.json(newApplication);
+    res.json({ jobApplication: newApplication, note: newNote });
   } catch (error) {
     console.error("Error creating job application:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -118,6 +130,9 @@ export async function getApplications(
     const jobApplications = await prismadb.jobApplication.findMany({
       where: {
         userId: userId as string,
+      },
+      include: {
+        note: true,
       },
     });
     res.json(jobApplications);
@@ -145,6 +160,9 @@ export async function getApplication(
     const jobApplications = await prismadb.jobApplication.findMany({
       where: {
         userId: userId,
+      },
+      include: {
+        note: true,
       },
     });
     res.json(jobApplications);
