@@ -10,7 +10,7 @@ async function addNewTags(
   userId: string,
   res: Response
 ) {
-  const newTags = tags.map((tag: string) => {
+  const newTags = tags.filter(Boolean).map((tag: string) => {
     return {
       color: "#FFFFFF",
       name: tag.toLowerCase(),
