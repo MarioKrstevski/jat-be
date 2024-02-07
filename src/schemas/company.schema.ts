@@ -6,14 +6,25 @@ export const getCompanySchema = z.object({
   }),
 });
 
-export const saveCompanySchema = z.object({
+export const saveExistingCompanySchema = z.object({
   body: z.object({
     companyId: z.string(),
+  }),
+});
+export const saveCustomCompanySchema = z.object({
+  body: z.object({
+    name: z.string(),
+    linkedin: z
+      .string()
+      .regex(/^(https?:\/\/)?([\w-]+\.)*linkedin\.com(\/.*)?$/),
   }),
 });
 
 export const requestCompanySchema = z.object({
   body: z.object({
-    companyId: z.string(),
+    name: z.string(),
+    linkedin: z
+      .string()
+      .regex(/^(https?:\/\/)?([\w-]+\.)*linkedin\.com(\/.*)?$/),
   }),
 });

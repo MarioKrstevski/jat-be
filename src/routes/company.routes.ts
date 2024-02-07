@@ -3,21 +3,34 @@ import {
   getCompanies,
   getCompany,
   getSavedCompanies,
-  saveCompany,
   requestCompany,
+  saveExistingCompany,
+  saveCustomCompany,
 } from "../controllers/company.controller";
 import { zValidate } from "../middleware/validateZod.middleware";
-import { getCompanySchema } from "../schemas/company.schema";
+import {
+  getCompanySchema,
+  saveCustomCompanySchema,
+  saveExistingCompanySchema,
+} from "../schemas/company.schema";
 
 const companies = Router();
 
 companies.get("/", getCompanies);
 
+companies.get("/saved", getSavedCompanies);
 companies.get("/:companyId", zValidate(getCompanySchema), getCompany);
 
-companies.get("/saved", getSavedCompanies);
-
-companies.post("/save", saveCompany);
+companies.post(
+  "/save/existing",
+  zValidate(saveExistingCompanySchema),
+  saveExistingCompany
+);
+companies.post(
+  "/save/custom",
+  zValidate(saveCustomCompanySchema),
+  saveCustomCompany
+);
 
 companies.post("/request", requestCompany);
 

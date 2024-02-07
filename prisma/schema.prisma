@@ -22,16 +22,18 @@ model Company {
   linkedin       String           @unique @default("")
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
-  JobApplication JobApplication[]
-  SavedCompany   SavedCompany[]
+  jobApplication JobApplication[]
+  savedCompany   SavedCompany[]
 }
 
 model SavedCompany {
   id        String   @id @default(uuid())
   userId    String
-  companyId String
+  linkedin  String?
+  name      String?
+  companyId String?
   company   Company? @relation(fields: [companyId], references: [id])
-  Note      Note?    @relation(fields: [noteId], references: [id])
+  note      Note?    @relation(fields: [noteId], references: [id], onDelete: Cascade)
   noteId    String?
 
   @@index([companyId])

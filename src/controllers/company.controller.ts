@@ -56,6 +56,7 @@ export async function getSavedCompanies(
       },
       include: {
         company: true,
+        note: true,
       },
     });
     res.json(company);
@@ -65,26 +66,83 @@ export async function getSavedCompanies(
   }
 }
 
-export async function saveCompany(
+export async function saveExistingCompany(
   req: WithAuthProp<Request>,
   res: Response,
   next: NextFunction
 ) {
   const userId = req.auth.userId!;
-  console.log("Save Company");
+  const { companyId } = req.body;
+  console.log("Save Existing Company");
 
   try {
-    const company = await prismadb.savedCompany.findMany({
+    const existingCompany = await prismadb.savedCompany.findFirst({
       where: {
-        userId,
-      },
-      include: {
-        company: true,
+        companyId,
       },
     });
-    res.json(company);
+
+    if (existingCompany) {
+      res.status(400).json({ error: "Company already exists" });
+    } else {
+      const note = await prismadb.note.create({
+        data: {
+          userId,
+        },
+      });
+
+      const company = await prismadb.savedCompany.create({
+        data: {
+          companyId,
+          userId,
+          noteId: note.id,
+        },
+      });
+      res.json(company);
+    }
   } catch (error) {
-    console.error("Error fetching company:", error);
+    console.error("Error saving existing company:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+export async function saveCustomCompany(
+  req: WithAuthProp<Request>,
+  res: Response,
+  next: NextFunction
+) {
+  const userId = req.auth.userId!;
+  const { linkedin, name } = req.body;
+  console.log("Save Custom Company");
+
+  try {
+    const existingCompany = await prismadb.savedCompany.findFirst({
+      where: {
+        OR: [{ linkedin }, { company: { linkedin } }],
+      },
+    });
+
+    if (existingCompany) {
+      res.status(400).json({ error: "Company already exists" });
+    } else {
+      const note = await prismadb.note.create({
+        data: {
+          userId,
+        },
+      });
+
+      const company = await prismadb.savedCompany.create({
+        data: {
+          userId,
+          name,
+          linkedin,
+          noteId: note.id,
+        },
+      });
+      res.json(company);
+    }
+  } catch (error) {
+    console.error("Error saving custom company:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
@@ -95,16 +153,18 @@ export async function requestCompany(
   next: NextFunction
 ) {
   const userId = req.auth.userId!;
-  const { name, linkedinUrl } = req.body;
+  const { name, linkedin } = req.body;
   console.log("Request Company ");
 
   try {
     // Check if the linkedinUrl already exists in the company table
     const existingCompany = await prismadb.company.findFirst({
       where: {
-        linkedin: linkedinUrl,
+        linkedin,
       },
     });
+    console.log("existingCompany", existingCompany);
+    console.log("linkedinUrl", linkedin);
 
     if (existingCompany) {
       return res
@@ -116,7 +176,7 @@ export async function requestCompany(
     const existingRequestedCompany =
       await prismadb.requestedCompany.findFirst({
         where: {
-          linkedin: linkedinUrl,
+          linkedin,
         },
       });
 
@@ -130,7 +190,7 @@ export async function requestCompany(
       data: {
         userId,
         name,
-        linkedin: linkedinUrl,
+        linkedin,
       },
     });
     res.json(requestedCompany);
