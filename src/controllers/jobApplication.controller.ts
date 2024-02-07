@@ -20,7 +20,7 @@ async function addNewTags(
   });
 
   try {
-    await prismadb.jobApplicationTags.createMany({
+    await prismadb.jobApplicationTag.createMany({
       data: newTags,
       skipDuplicates: true,
     });
@@ -48,7 +48,7 @@ export async function createApplication(
       .split(",")
       .map((tag: string) => tag.trim().toLowerCase());
 
-    const existingTags = await prismadb.jobApplicationTags.findMany({
+    const existingTags = await prismadb.jobApplicationTag.findMany({
       where: {
         userId,
       },
@@ -196,7 +196,7 @@ export async function editApplication(
       .split(",")
       .map((tag: string) => tag.trim().toLowerCase());
 
-    const existingTags = await prismadb.jobApplicationTags.findMany({
+    const existingTags = await prismadb.jobApplicationTag.findMany({
       where: {
         userId,
       },

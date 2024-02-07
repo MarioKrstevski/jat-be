@@ -2,7 +2,6 @@ import { WithAuthProp } from "@clerk/clerk-sdk-node";
 import { NextFunction, Request, Response } from "express";
 
 import prismadb from "../prismadb";
-import { JobApplicationTags } from "@prisma/client";
 
 export async function createTag(
   req: WithAuthProp<Request>,
@@ -14,7 +13,7 @@ export async function createTag(
   console.log("Create tag ");
 
   try {
-    const tag = await prismadb.jobApplicationTags.create({
+    const tag = await prismadb.jobApplicationTag.create({
       data: {
         color: color.toUpperCase(),
         name: name.toLowerCase(),
@@ -37,7 +36,7 @@ export async function getTags(
   console.log("Get Tags ");
 
   try {
-    const tags = await prismadb.jobApplicationTags.findMany({
+    const tags = await prismadb.jobApplicationTag.findMany({
       where: {
         userId: userId as string,
       },
@@ -60,7 +59,7 @@ export async function editTag(
 
   // update tag in tags table
   try {
-    const tag = await prismadb.jobApplicationTags.update({
+    const tag = await prismadb.jobApplicationTag.update({
       where: {
         id: tagId,
         userId: userId as string,
@@ -133,7 +132,7 @@ export async function deleteTag(
   console.log("Delete Tag " + tagId);
 
   try {
-    const tag = await prismadb.jobApplicationTags.delete({
+    const tag = await prismadb.jobApplicationTag.delete({
       where: {
         userId: userId as string,
         id: tagId as string,

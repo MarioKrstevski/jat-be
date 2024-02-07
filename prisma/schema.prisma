@@ -13,17 +13,32 @@ datasource db {
 
 model Company {
   id             String           @id @default(uuid())
-  name           String           @unique
+  name           String
   description    String           @default("")
-  companyInfo    String           @default("") // Company website, location, size, etc
   logo           String           @default("")
   website        String           @default("")
+  companySize    String           @default("")
+  industry       String           @default("")
+  linkedin       String           @unique @default("")
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   JobApplication JobApplication[]
+  SavedCompany   SavedCompany[]
 }
 
-model JobApplicationTags {
+model SavedCompany {
+  id        String   @id @default(uuid())
+  userId    String
+  companyId String
+  company   Company? @relation(fields: [companyId], references: [id])
+  Note      Note?    @relation(fields: [noteId], references: [id])
+  noteId    String?
+
+  @@index([companyId])
+  @@index([noteId])
+}
+
+model JobApplicationTag {
   id     String @id @default(uuid())
   name   String @unique
   userId String
@@ -47,7 +62,6 @@ model JobApplication {
   companyId             String?
   companyName           String
   company               Company?  @relation(fields: [companyId], references: [id])
-  companyInfo           String    @default("") // Company website, location, size, etc
   jobTitle              String
   jobLocation           String    @default("") // Job location (city, state, country) or address
   link                  String    @default("") // Link to the job posting
@@ -84,6 +98,9 @@ model Note {
   updatedAt        DateTime        @updatedAt
   jobApplicationId String?         @unique
   jobApplication   JobApplication? @relation(fields: [jobApplicationId], references: [id])
+
+  savedCompany   SavedCompany[]
+  savedCompanyId String?
 
   @@index([jobApplicationId])
 }

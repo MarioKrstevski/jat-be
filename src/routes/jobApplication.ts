@@ -7,7 +7,7 @@ import {
   editApplication,
   getApplication,
   getApplications,
-} from "../controllers/applications.controller";
+} from "../controllers/jobApplication.controller";
 import {
   zConditionalValidate,
   zValidate,
@@ -21,7 +21,7 @@ import {
   getApplicationSchema,
   // getApplicationsSchema,
   initialEditValidationSchema,
-} from "../schemas/applications.schema";
+} from "../schemas/jobApplication.schema";
 
 const applications = Router();
 

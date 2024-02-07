@@ -4,13 +4,13 @@ import {
   deleteTag,
   editTag,
   getTags,
-} from "../controllers/tags.controller";
+} from "../controllers/jobApplicationTag.controller";
 import { zValidate } from "../middleware/validateZod.middleware";
 import {
   createTagSchema,
   deleteTagSchema,
   editTagSchema,
-} from "../schemas/tags.schema";
+} from "../schemas/jobApplicationTag.schema";
 const tags = Router();
 
 tags.post("/", zValidate(createTagSchema), createTag);
