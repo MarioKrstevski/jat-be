@@ -11,19 +11,40 @@ datasource db {
   relationMode = "prisma"
 }
 
+model Contact {
+  id                   String   @id @default(uuid())
+  userId               String
+  name                 String
+  companyName          String?  @default("")
+  positionOrDepartment String?  @default("")
+  companyId            String?  @default("")
+  company              Company? @relation(fields: [companyId], references: [id])
+  email                String?  @default("")
+  linkedin             String?  @default("")
+  phone                String?  @default("")
+  noteId               String   @unique
+  note                 Note     @relation(fields: [noteId], references: [id])
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([companyId])
+  @@index([noteId])
+}
+
 model Company {
-  id             String           @id @default(uuid())
-  name           String
-  description    String           @default("")
-  logo           String           @default("")
-  website        String           @default("")
-  companySize    String           @default("")
-  industry       String           @default("")
-  linkedin       String           @unique @default("")
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  jobApplication JobApplication[]
-  savedCompany   SavedCompany[]
+  id              String           @id @default(uuid())
+  name            String
+  description     String           @default("")
+  logo            String           @default("")
+  website         String           @default("")
+  companySize     String           @default("")
+  industry        String           @default("")
+  linkedin        String           @unique @default("")
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  jobApplications JobApplication[]
+  savedCompanies  SavedCompany[]
+  contacts        Contact[]
 }
 
 model SavedCompany {
@@ -33,8 +54,8 @@ model SavedCompany {
   name      String?
   companyId String?
   company   Company? @relation(fields: [companyId], references: [id])
-  note      Note?    @relation(fields: [noteId], references: [id], onDelete: Cascade)
-  noteId    String?
+  note      Note?    @relation(fields: [noteId], references: [id])
+  noteId    String?  @unique
 
   @@index([companyId])
   @@index([noteId])
@@ -97,7 +118,8 @@ model JobApplication {
   appliedFrom           String    @default("") //where did you apply for the job (linkedin, email, etc or specific link for applying)
   heardAboutFrom        String    @default("")
   todos                 String    @default("") @db.VarChar(2200) // List follow-up actions or tasks related to the application as reminder
-  note                  Note?
+  noteId                String?   @unique
+  note                  Note?     @relation(fields: [noteId], references: [id])
 
   @@index([companyId])
   @@index([id])
@@ -109,11 +131,10 @@ model Note {
   content          String          @default("") @db.VarChar(3200)
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
-  jobApplicationId String?         @unique
-  jobApplication   JobApplication? @relation(fields: [jobApplicationId], references: [id])
-
-  savedCompany   SavedCompany[]
-  savedCompanyId String?
-
-  @@index([jobApplicationId])
+  jobApplicationId String?
+  jobApplication   JobApplication?
+  savedCompanyId   String?
+  savedCompany     SavedCompany?
+  contactId        String?
+  contact          Contact?
 }

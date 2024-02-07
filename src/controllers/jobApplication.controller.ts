@@ -89,28 +89,27 @@ export async function createApplication(
   }
 
   try {
-    const applicationWithoutNote = { ...application };
+    try {
+      const newNote = await prismadb.note.create({
+        data: {
+          content: application.note,
+          userId,
+        },
+      });
 
-    delete applicationWithoutNote.note;
-    const newApplication = await prismadb.jobApplication.create({
-      data: {
-        ...applicationWithoutNote,
-        userId,
-      },
-      include: {
-        note: true,
-      },
-    });
+      const newApplication = await prismadb.jobApplication.create({
+        data: {
+          ...application,
+          userId,
+          noteId: newNote.id,
+        },
+      });
 
-    const newNote = await prismadb.note.create({
-      data: {
-        content: application.note,
-        userId,
-        jobApplicationId: newApplication.id,
-      },
-    });
-
-    res.json({ jobApplication: newApplication, note: newNote });
+      res.json({ jobApplication: newApplication, note: newNote });
+    } catch (error) {
+      console.error("Error creating job application:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
   } catch (error) {
     console.error("Error creating job application:", error);
     res.status(500).json({ error: "Internal Server Error" });
