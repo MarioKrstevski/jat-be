@@ -12,10 +12,11 @@ import express, {
   Request,
   Response,
 } from "express";
-import applicationsRoutes from "./routes/jobApplication";
-import tagsRoutes from "./routes/jobApplicationTag";
+import applicationsRoutes from "./routes/jobApplication.routes";
+import tagsRoutes from "./routes/jobApplicationTag.routes";
 import { ClerkLogUserId } from "./middleware/ClerkLogUserId.middleware";
-import notesRoutes from "./routes/note";
+import notesRoutes from "./routes/note.routes";
+import companiesRoutes from "./routes/company.routes";
 
 // so that WithAuthProp<Request> works correctly
 declare global {
@@ -41,6 +42,15 @@ app.use(
   }),
   ClerkLogUserId(),
   tagsRoutes
+);
+
+app.use(
+  "/api/companies",
+  ClerkExpressRequireAuth({
+    // ...options
+  }),
+  ClerkLogUserId(),
+  companiesRoutes
 );
 
 app.use(

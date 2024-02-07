@@ -38,6 +38,17 @@ model SavedCompany {
   @@index([noteId])
 }
 
+// will be under company schema
+model RequestedCompany {
+  id        String   @id @default(uuid())
+  userId    String
+  name      String
+  linkedin  String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  fulfilled Boolean  @default(false)
+}
+
 model JobApplicationTag {
   id     String @id @default(uuid())
   name   String @unique

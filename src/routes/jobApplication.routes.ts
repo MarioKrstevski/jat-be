@@ -57,7 +57,7 @@ applications.get(
 // ---------------------------------------------
 
 applications.get(
-  "/:id",
+  "/:applicationId",
   zValidate(getApplicationSchema),
   getApplication
 );
