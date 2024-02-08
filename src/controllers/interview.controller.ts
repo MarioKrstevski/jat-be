@@ -19,7 +19,11 @@ export async function getInterviews(
       include: {
         note: true,
         contacts: true,
-        jobApplication: true,
+        jobApplication: {
+          include: {
+            company: true,
+          },
+        },
       },
     });
     res.json(interviews);
