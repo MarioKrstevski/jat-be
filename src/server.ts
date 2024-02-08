@@ -19,6 +19,7 @@ import tagsRoutes from "./routes/jobApplicationTag.routes";
 import notesRoutes from "./routes/note.routes";
 import companiesRoutes from "./routes/company.routes";
 import contactsRoutes from "./routes/contact.routes";
+import interviewsRoutes from "./routes/interview.routes";
 
 // so that WithAuthProp<Request> works correctly
 declare global {
@@ -46,6 +47,14 @@ app.use(
   tagsRoutes
 );
 
+app.use(
+  "/api/interviews",
+  ClerkExpressRequireAuth({
+    // ...options
+  }),
+  ClerkLogUserId(),
+  interviewsRoutes
+);
 app.use(
   "/api/contacts",
   ClerkExpressRequireAuth({
