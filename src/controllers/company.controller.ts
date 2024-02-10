@@ -164,6 +164,58 @@ export async function saveCustomCompany(
   }
 }
 
+export async function editCustomCompany(
+  req: WithAuthProp<Request>,
+  res: Response,
+  next: NextFunction
+) {
+  const userId = req.auth.userId!;
+  const { link, name, savedCompanyId } = req.body;
+  console.log("Edit Custom Company " + savedCompanyId);
+
+  try {
+    if (link) {
+      const existingCompany = await prismadb.savedCompany.findFirst({
+        where: {
+          OR: [{ link }, { company: { linkedin: link } }],
+        },
+      });
+
+      if (existingCompany) {
+        return res.status(400).json({
+          error: "Company with the same link already exists",
+        });
+      }
+    } else {
+      const existingCompany = await prismadb.savedCompany.findFirst({
+        where: {
+          name,
+        },
+      });
+
+      if (existingCompany) {
+        return res.status(400).json({
+          error: "Company with the same name already exists",
+        });
+      }
+    }
+
+    const company = await prismadb.savedCompany.update({
+      where: {
+        id: savedCompanyId,
+      },
+      data: {
+        name,
+        link,
+      },
+    });
+    res.json(company);
+  } catch (error) {
+    console.error("Error editing custom company:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
 export async function requestCompany(
   req: WithAuthProp<Request>,
   res: Response,

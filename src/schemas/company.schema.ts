@@ -18,6 +18,13 @@ export const saveCustomCompanySchema = z.object({
     link: z.string().regex(urlRegex).optional(),
   }),
 });
+export const editCustomCompanySchema = z.object({
+  body: z.object({
+    name: z.string(),
+    link: z.string().regex(urlRegex).optional(),
+    savedCompanyId: z.string(),
+  }),
+});
 
 export const requestCompanySchema = z.object({
   body: z.object({

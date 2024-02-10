@@ -7,10 +7,12 @@ import {
   saveExistingCompany,
   saveCustomCompany,
   deleteCustomCompany,
+  editCustomCompany,
 } from "../controllers/company.controller";
 import { zValidate } from "../middleware/validateZod.middleware";
 import {
   deleteCustomCompanySchema,
+  editCustomCompanySchema,
   getCompanySchema,
   saveCustomCompanySchema,
   saveExistingCompanySchema,
@@ -33,6 +35,13 @@ companies.post(
   zValidate(saveCustomCompanySchema),
   saveCustomCompany
 );
+
+companies.patch(
+  "/edit/custom",
+  zValidate(editCustomCompanySchema),
+  editCustomCompany
+);
+
 companies.delete(
   "/custom",
   zValidate(deleteCustomCompanySchema),
