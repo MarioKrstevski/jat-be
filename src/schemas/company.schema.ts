@@ -22,6 +22,6 @@ export const saveCustomCompanySchema = z.object({
 export const requestCompanySchema = z.object({
   body: z.object({
     name: z.string(),
-    link: z.string().url(),
+    link: z.string().regex(urlRegex).optional(),
   }),
 });
