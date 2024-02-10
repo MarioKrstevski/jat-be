@@ -113,35 +113,37 @@ export async function saveCustomCompany(
   next: NextFunction
 ) {
   const userId = req.auth.userId!;
-  const { linkedin, name } = req.body;
+  const { link, name } = req.body;
   console.log("Save Custom Company");
 
   try {
-    const existingCompany = await prismadb.savedCompany.findFirst({
-      where: {
-        OR: [{ linkedin }, { company: { linkedin } }],
+    if (link) {
+      const existingCompany = await prismadb.savedCompany.findFirst({
+        where: {
+          OR: [{ link }, { company: { linkedin: link } }],
+        },
+      });
+
+      if (existingCompany) {
+        res.status(400).json({ error: "Company already exists" });
+      }
+    }
+
+    const note = await prismadb.note.create({
+      data: {
+        userId,
       },
     });
 
-    if (existingCompany) {
-      res.status(400).json({ error: "Company already exists" });
-    } else {
-      const note = await prismadb.note.create({
-        data: {
-          userId,
-        },
-      });
-
-      const company = await prismadb.savedCompany.create({
-        data: {
-          userId,
-          name,
-          linkedin,
-          noteId: note.id,
-        },
-      });
-      res.json(company);
-    }
+    const company = await prismadb.savedCompany.create({
+      data: {
+        userId,
+        name,
+        link,
+        noteId: note.id,
+      },
+    });
+    res.json(company);
   } catch (error) {
     console.error("Error saving custom company:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -154,18 +156,16 @@ export async function requestCompany(
   next: NextFunction
 ) {
   const userId = req.auth.userId!;
-  const { name, linkedin } = req.body;
+  const { name, link } = req.body;
   console.log("Request Company ");
 
   try {
     // Check if the linkedinUrl already exists in the company table
     const existingCompany = await prismadb.company.findFirst({
       where: {
-        linkedin,
+        linkedin: link,
       },
     });
-    console.log("existingCompany", existingCompany);
-    console.log("linkedinUrl", linkedin);
 
     if (existingCompany) {
       return res
@@ -177,7 +177,7 @@ export async function requestCompany(
     const existingRequestedCompany =
       await prismadb.requestedCompany.findFirst({
         where: {
-          linkedin,
+          link,
         },
       });
 
@@ -191,7 +191,7 @@ export async function requestCompany(
       data: {
         userId,
         name,
-        linkedin,
+        link,
       },
     });
     res.json(requestedCompany);

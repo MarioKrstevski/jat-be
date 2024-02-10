@@ -73,7 +73,7 @@ model Company {
 model SavedCompany {
   id        String    @id @default(uuid())
   userId    String
-  linkedin  String?
+  link      String?
   name      String?
   companyId String?
   company   Company?  @relation(fields: [companyId], references: [id])
@@ -90,7 +90,7 @@ model RequestedCompany {
   id        String   @id @default(uuid())
   userId    String
   name      String
-  linkedin  String   @unique
+  link      String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   fulfilled Boolean  @default(false)

@@ -11,20 +11,17 @@ export const saveExistingCompanySchema = z.object({
     companyId: z.string(),
   }),
 });
+const urlRegex = /^(?:https?:\/\/)?(?:www\.)?[^\s.]+\.[^\s]+$/;
 export const saveCustomCompanySchema = z.object({
   body: z.object({
     name: z.string(),
-    linkedin: z
-      .string()
-      .regex(/^(https?:\/\/)?([\w-]+\.)*linkedin\.com(\/.*)?$/),
+    link: z.string().regex(urlRegex).optional(),
   }),
 });
 
 export const requestCompanySchema = z.object({
   body: z.object({
     name: z.string(),
-    linkedin: z
-      .string()
-      .regex(/^(https?:\/\/)?([\w-]+\.)*linkedin\.com(\/.*)?$/),
+    link: z.string().url(),
   }),
 });
