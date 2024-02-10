@@ -45,36 +45,41 @@ model Contact {
   updatedAt            DateTime         @updatedAt
   interviews           Interview[]
   jobInterviews        JobApplication[]
+  savedCompany         SavedCompany?    @relation(fields: [savedCompanyId], references: [id])
+  savedCompanyId       String?
 
   @@index([companyId])
+  @@index([savedCompanyId])
   @@index([noteId])
 }
 
 model Company {
-  id              String           @id @default(uuid())
-  name            String
-  description     String           @default("")
-  logo            String           @default("")
-  website         String           @default("")
-  companySize     String           @default("")
-  industry        String           @default("")
-  linkedin        String           @unique @default("")
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  jobApplications JobApplication[]
-  savedCompanies  SavedCompany[]
-  contacts        Contact[]
+  id               String           @id @default(uuid())
+  name             String
+  shortDescription String           @default("") @db.VarChar(250)
+  description      String           @default("") @db.VarChar(1050)
+  logo             String           @default("") @db.VarChar(250)
+  website          String           @default("")
+  companySize      String           @default("")
+  industry         String           @default("")
+  linkedin         String           @unique @default("")
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  jobApplications  JobApplication[]
+  savedCompanies   SavedCompany[]
+  contacts         Contact[]
 }
 
 model SavedCompany {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   userId    String
   linkedin  String?
   name      String?
   companyId String?
-  company   Company? @relation(fields: [companyId], references: [id])
-  note      Note?    @relation(fields: [noteId], references: [id])
-  noteId    String?  @unique
+  company   Company?  @relation(fields: [companyId], references: [id])
+  note      Note      @relation(fields: [noteId], references: [id])
+  noteId    String    @unique
+  contacts  Contact[]
 
   @@index([companyId])
   @@index([noteId])
@@ -155,7 +160,6 @@ model Note {
   updatedAt        DateTime        @updatedAt
   jobApplicationId String?
   jobApplication   JobApplication?
-  savedCompanyId   String?
   savedCompany     SavedCompany?
   contactId        String?
   contact          Contact?

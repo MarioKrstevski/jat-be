@@ -16,7 +16,11 @@ export async function getContacts(
         userId: userId as string,
       },
       include: {
-        company: true,
+        company: {
+          include: {
+            contacts: true,
+          },
+        },
         note: true,
       },
     });

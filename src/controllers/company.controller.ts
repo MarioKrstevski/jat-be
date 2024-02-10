@@ -57,6 +57,7 @@ export async function getSavedCompanies(
       include: {
         company: true,
         note: true,
+        contacts: true,
       },
     });
     res.json(company);
