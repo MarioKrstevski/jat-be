@@ -25,3 +25,9 @@ export const requestCompanySchema = z.object({
     link: z.string().regex(urlRegex).optional(),
   }),
 });
+
+export const deleteCustomCompanySchema = z.object({
+  body: z.object({
+    savedCompanyId: z.string(),
+  }),
+});

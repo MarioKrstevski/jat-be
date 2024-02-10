@@ -200,3 +200,25 @@ export async function requestCompany(
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
+
+export async function deleteCustomCompany(
+  req: WithAuthProp<Request>,
+  res: Response,
+  next: NextFunction
+) {
+  const userId = req.auth.userId!;
+  const { savedCompanyId } = req.body;
+  console.log("Delete Custom Company " + savedCompanyId);
+
+  try {
+    const company = await prismadb.savedCompany.delete({
+      where: {
+        id: savedCompanyId,
+      },
+    });
+    res.json(company);
+  } catch (error) {
+    console.error("Error deleting custom company:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}

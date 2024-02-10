@@ -77,7 +77,7 @@ model SavedCompany {
   name      String?
   companyId String?
   company   Company?  @relation(fields: [companyId], references: [id])
-  note      Note      @relation(fields: [noteId], references: [id])
+  note      Note      @relation(fields: [noteId], references: [id], onDelete: Cascade)
   noteId    String    @unique
   contacts  Contact[]
 

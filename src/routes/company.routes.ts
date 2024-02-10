@@ -6,9 +6,11 @@ import {
   requestCompany,
   saveExistingCompany,
   saveCustomCompany,
+  deleteCustomCompany,
 } from "../controllers/company.controller";
 import { zValidate } from "../middleware/validateZod.middleware";
 import {
+  deleteCustomCompanySchema,
   getCompanySchema,
   saveCustomCompanySchema,
   saveExistingCompanySchema,
@@ -30,6 +32,11 @@ companies.post(
   "/save/custom",
   zValidate(saveCustomCompanySchema),
   saveCustomCompany
+);
+companies.delete(
+  "/custom",
+  zValidate(deleteCustomCompanySchema),
+  deleteCustomCompany
 );
 
 companies.post("/request", requestCompany);
