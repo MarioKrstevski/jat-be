@@ -125,7 +125,21 @@ export async function saveCustomCompany(
       });
 
       if (existingCompany) {
-        res.status(400).json({ error: "Company already exists" });
+        return res.status(400).json({
+          error: "Company with the same link already exists",
+        });
+      }
+    } else {
+      const existingCompany = await prismadb.savedCompany.findFirst({
+        where: {
+          name,
+        },
+      });
+
+      if (existingCompany) {
+        return res.status(400).json({
+          error: "Company with the same name already exists",
+        });
       }
     }
 
