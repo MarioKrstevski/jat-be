@@ -68,3 +68,54 @@ export async function createContact(
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
+
+export async function editContact(
+  req: WithAuthProp<Request>,
+  res: Response,
+  next: NextFunction
+) {
+  const userId = req.auth.userId!;
+  console.log("Updating Contact");
+  const { contactData, contactId } = req.body;
+
+  try {
+    const contact = await prismadb.contact.update({
+      where: {
+        id: contactId,
+      },
+      data: {
+        ...contactData,
+        userId,
+        companyId: contactData.companyId,
+      },
+    });
+
+    res.json(contact);
+  } catch (error) {
+    console.error("Error updating contact:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+export async function deleteContact(
+  req: WithAuthProp<Request>,
+  res: Response,
+  next: NextFunction
+) {
+  const userId = req.auth.userId!;
+  console.log("Create Contact");
+  const { contactId } = req.body;
+
+  try {
+    const contact = await prismadb.contact.delete({
+      where: {
+        id: contactId,
+      },
+    });
+
+    res.json(contact);
+  } catch (error) {
+    console.error("Error deleting contact:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
