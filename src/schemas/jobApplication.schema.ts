@@ -31,7 +31,7 @@ export const createApplicationSchema = z.object({
 });
 
 export const getApplicationSchema = z.object({
-  query: z.object({
+  params: z.object({
     applicationId: z.string(),
   }),
 });

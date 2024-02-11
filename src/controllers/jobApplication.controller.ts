@@ -156,12 +156,15 @@ export async function getApplication(
   console.log("Get Application with ID " + applicationId);
 
   try {
-    const jobApplications = await prismadb.jobApplication.findMany({
+    const jobApplications = await prismadb.jobApplication.findFirst({
       where: {
         userId: userId,
       },
       include: {
         note: true,
+        company: true,
+        contacts: true,
+        interviews: true,
       },
     });
     res.json(jobApplications);
