@@ -1,13 +1,13 @@
 import { z } from "zod";
 
 export const getCompanySchema = z.object({
-  query: z.object({
+  params: z.object({
     companyId: z.string(),
   }),
 });
 
 export const saveExistingCompanySchema = z.object({
-  body: z.object({
+  params: z.object({
     companyId: z.string(),
   }),
 });
@@ -18,11 +18,13 @@ export const saveCustomCompanySchema = z.object({
     link: z.string().regex(urlRegex).optional(),
   }),
 });
-export const editCustomCompanySchema = z.object({
+export const updateSavedCustomCompanySchema = z.object({
+  params: z.object({
+    savedCompanyId: z.string(),
+  }),
   body: z.object({
     name: z.string(),
     link: z.string().regex(urlRegex).optional(),
-    savedCompanyId: z.string(),
   }),
 });
 
@@ -34,7 +36,7 @@ export const requestCompanySchema = z.object({
 });
 
 export const deleteCustomCompanySchema = z.object({
-  body: z.object({
+  params: z.object({
     savedCompanyId: z.string(),
   }),
 });

@@ -25,8 +25,8 @@ export async function getCompany(
   next: NextFunction
 ) {
   const userId = req.auth.userId!;
-  console.log("Get Companies ");
-  const { companyId } = req.query;
+  console.log("Get Company ");
+  const { companyId } = req.params;
 
   try {
     const company = await prismadb.company.findFirst({
@@ -73,7 +73,7 @@ export async function saveExistingCompany(
   next: NextFunction
 ) {
   const userId = req.auth.userId!;
-  const { companyId } = req.body;
+  const { companyId } = req.params;
   console.log("Save Existing Company");
 
   try {
@@ -99,7 +99,7 @@ export async function saveExistingCompany(
           noteId: note.id,
         },
       });
-      res.json(company);
+      res.json({ company, note });
     }
   } catch (error) {
     console.error("Error saving existing company:", error);
@@ -157,24 +157,31 @@ export async function saveCustomCompany(
         noteId: note.id,
       },
     });
-    res.json(company);
+    res.json({ company, note });
   } catch (error) {
     console.error("Error saving custom company:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
 
-export async function editCustomCompany(
+export async function updateSavedCustomCompany(
   req: WithAuthProp<Request>,
   res: Response,
   next: NextFunction
 ) {
   const userId = req.auth.userId!;
-  const { link, name, savedCompanyId } = req.body;
+  const { link, name } = req.body;
+  const { savedCompanyId } = req.params;
   console.log("Edit Custom Company " + savedCompanyId);
 
   try {
-    if (link) {
+    const editingCompany = await prismadb.savedCompany.findFirst({
+      where: {
+        id: savedCompanyId,
+      },
+    });
+
+    if (link && editingCompany?.link !== link) {
       const existingCompany = await prismadb.savedCompany.findFirst({
         where: {
           OR: [{ link }, { company: { linkedin: link } }],
@@ -186,7 +193,8 @@ export async function editCustomCompany(
           error: "Company with the same link already exists",
         });
       }
-    } else {
+    }
+    if (name && editingCompany?.name !== name) {
       const existingCompany = await prismadb.savedCompany.findFirst({
         where: {
           name,
@@ -267,13 +275,13 @@ export async function requestCompany(
   }
 }
 
-export async function deleteCustomCompany(
+export async function deleteSavedCompany(
   req: WithAuthProp<Request>,
   res: Response,
   next: NextFunction
 ) {
   const userId = req.auth.userId!;
-  const { savedCompanyId } = req.body;
+  const { savedCompanyId } = req.params;
   console.log("Delete Custom Company " + savedCompanyId);
 
   try {

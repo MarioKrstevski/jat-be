@@ -62,7 +62,7 @@ export async function createContact(
       },
     });
 
-    res.json(contact);
+    res.json({ contact, note });
   } catch (error) {
     console.error("Error creating contact:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -76,7 +76,8 @@ export async function editContact(
 ) {
   const userId = req.auth.userId!;
   console.log("Updating Contact");
-  const { contactData, contactId } = req.body;
+  const { contactData } = req.body;
+  const { contactId } = req.params;
 
   try {
     const contact = await prismadb.contact.update({
@@ -104,12 +105,12 @@ export async function deleteContact(
 ) {
   const userId = req.auth.userId!;
   console.log("Create Contact");
-  const { contactId } = req.body;
+  const { contactId } = req.params;
 
   try {
     const contact = await prismadb.contact.delete({
       where: {
-        id: contactId,
+        id: contactId as string,
       },
     });
 

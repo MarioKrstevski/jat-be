@@ -11,12 +11,21 @@ import {
   deleteContactSchema,
   editContactSchema,
 } from "../schemas/contact.schema";
+import { consoleLogRequest } from "../middleware/consoleLogRequest.middleware";
 
 const contacts = Router();
 
 contacts.get("/", getContacts);
 contacts.post("/", zValidate(createContactSchema), createContact);
-contacts.patch("/", zValidate(editContactSchema), editContact);
-contacts.delete("/", zValidate(deleteContactSchema), deleteContact);
+contacts.patch(
+  "/:contactId",
+  zValidate(editContactSchema),
+  editContact
+);
+contacts.delete(
+  "/:contactId",
+  zValidate(deleteContactSchema),
+  deleteContact
+);
 
 export default contacts;

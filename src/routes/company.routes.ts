@@ -6,46 +6,45 @@ import {
   requestCompany,
   saveExistingCompany,
   saveCustomCompany,
-  deleteCustomCompany,
-  editCustomCompany,
+  deleteSavedCompany,
+  updateSavedCustomCompany,
 } from "../controllers/company.controller";
 import { zValidate } from "../middleware/validateZod.middleware";
 import {
   deleteCustomCompanySchema,
-  editCustomCompanySchema,
   getCompanySchema,
   saveCustomCompanySchema,
   saveExistingCompanySchema,
+  updateSavedCustomCompanySchema,
 } from "../schemas/company.schema";
 
 const companies = Router();
 
-companies.get("/", getCompanies);
-
 companies.get("/saved", getSavedCompanies);
 companies.get("/:companyId", zValidate(getCompanySchema), getCompany);
+companies.get("/", getCompanies);
 
 companies.post(
-  "/save/existing",
+  "/existing/save/:companyId",
   zValidate(saveExistingCompanySchema),
   saveExistingCompany
 );
 companies.post(
-  "/save/custom",
+  "/custom",
   zValidate(saveCustomCompanySchema),
   saveCustomCompany
 );
 
 companies.patch(
-  "/edit/custom",
-  zValidate(editCustomCompanySchema),
-  editCustomCompany
+  "/saved/custom/:savedCompanyId",
+  zValidate(updateSavedCustomCompanySchema),
+  updateSavedCustomCompany
 );
 
 companies.delete(
-  "/custom",
+  "/saved/:savedCompanyId",
   zValidate(deleteCustomCompanySchema),
-  deleteCustomCompany
+  deleteSavedCompany
 );
 
 companies.post("/request", requestCompany);
