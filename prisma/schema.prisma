@@ -143,8 +143,8 @@ model JobApplication {
   appliedFrom           String      @default("") //where did you apply for the job (linkedin, email, etc or specific link for applying)
   heardAboutFrom        String      @default("")
   todos                 String      @default("") @db.VarChar(2200) // List follow-up actions or tasks related to the application as reminder
-  noteId                String?     @unique
-  note                  Note?       @relation(fields: [noteId], references: [id])
+  noteId                String      @unique
+  note                  Note        @relation(fields: [noteId], references: [id])
   interviews            Interview[]
   contacts              Contact[]
   contactId             String?
