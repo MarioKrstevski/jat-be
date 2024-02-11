@@ -54,7 +54,8 @@ export async function editTag(
   next: NextFunction
 ) {
   const userId = req.auth.userId!;
-  const { newColor, newName, originalName, tagId } = req.body;
+  const { newColor, newName, originalName } = req.body;
+  const { tagId } = req.params;
   console.log("Edit Tag " + tagId);
 
   // update tag in tags table
@@ -128,7 +129,7 @@ export async function deleteTag(
   next: NextFunction
 ) {
   const userId = req.auth.userId!;
-  const { tagId, name } = req.query;
+  const { tagId } = req.params;
   console.log("Delete Tag " + tagId);
 
   try {
@@ -139,13 +140,13 @@ export async function deleteTag(
       },
     });
 
-    if (name) {
+    if (tag.name) {
       try {
         const applications = await prismadb.jobApplication.findMany({
           where: {
             userId: userId as string,
             tags: {
-              contains: name as string,
+              contains: tag.name as string,
             },
           },
         });
@@ -154,7 +155,7 @@ export async function deleteTag(
           const newTags = application.tags
             .split(",")
             .filter((t) => {
-              return t !== name;
+              return t !== tag.name;
             })
             .join(",");
 

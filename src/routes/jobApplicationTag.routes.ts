@@ -17,8 +17,8 @@ tags.post("/", zValidate(createTagSchema), createTag);
 
 tags.get("/", getTags);
 
-tags.patch("/", zValidate(editTagSchema), editTag);
+tags.patch("/:tagId", zValidate(editTagSchema), editTag);
 
-tags.delete("/", zValidate(deleteTagSchema), deleteTag);
+tags.delete("/:tagId", zValidate(deleteTagSchema), deleteTag);
 
 export default tags;
