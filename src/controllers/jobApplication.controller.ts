@@ -97,11 +97,18 @@ export async function createApplication(
         },
       });
 
+      let applicationWithoutCompany = { ...application };
+      delete applicationWithoutCompany.companyId;
+
       const newApplication = await prismadb.jobApplication.create({
         data: {
-          ...application,
+          ...applicationWithoutCompany,
           userId,
-          noteId: newNote.id,
+          note: {
+            connect: {
+              id: newNote.id,
+            },
+          },
         },
       });
 
