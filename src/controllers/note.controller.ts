@@ -8,7 +8,8 @@ export async function editNote(
   next: NextFunction
 ) {
   const userId = req.auth.userId!;
-  const { newContent, noteId } = req.body;
+  const { newContent } = req.body;
+  const { noteId } = req.params;
   console.log("Edit Note " + noteId);
 
   // update tag in tags table

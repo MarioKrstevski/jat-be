@@ -5,5 +5,5 @@ import { editNote } from "../controllers/note.controller";
 
 const notes = Router();
 
-notes.patch("/", zValidate(editNoteSchema), editNote);
+notes.patch("/:noteId", zValidate(editNoteSchema), editNote);
 export default notes;
