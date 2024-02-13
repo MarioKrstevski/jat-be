@@ -23,7 +23,9 @@ model Interview {
   note             Note?           @relation(fields: [noteId], references: [id])
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
-  contacts         Contact[]
+  title            String          @default("")
+  location         String          @default("") // can either be a zoom link, or a physical location adderss, or a gps coordinates
+  duration         String          @default("") // duration of the interview (preselected options for 30,45,60,90,120,120+)
 
   @@index([jobApplicationId])
 }
@@ -44,7 +46,6 @@ model Contact {
   note                 Note             @relation(fields: [noteId], references: [id])
   createdAt            DateTime         @default(now())
   updatedAt            DateTime         @updatedAt
-  interviews           Interview[]
   jobInterviews        JobApplication[]
   savedCompany         SavedCompany?    @relation(fields: [savedCompanyId], references: [id])
   savedCompanyId       String?

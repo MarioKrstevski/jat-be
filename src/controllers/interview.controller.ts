@@ -1,7 +1,6 @@
 import { WithAuthProp } from "@clerk/clerk-sdk-node";
 import { NextFunction, Request, Response } from "express";
 import prismadb from "../prismadb";
-import { Contact } from "@prisma/client";
 
 export async function getInterviews(
   req: WithAuthProp<Request>,
@@ -18,7 +17,6 @@ export async function getInterviews(
       },
       include: {
         note: true,
-        contacts: true,
         jobApplication: {
           include: {
             company: true,
@@ -56,6 +54,9 @@ export async function createInterview(
         format: interviewDetails.format,
         date: interviewDetails.date,
         userId: userId,
+        title: interviewDetails.title,
+        location: interviewDetails.location,
+        duration: interviewDetails.duration,
         note: {
           connect: {
             id: note.id,
@@ -76,7 +77,44 @@ export async function createInterview(
       },
       include: {
         note: true,
-        contacts: true,
+        jobApplication: true,
+      },
+    });
+
+    res.json(interview);
+  } catch (error) {
+    console.error("Error creating interview:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+export async function editInterview(
+  req: WithAuthProp<Request>,
+  res: Response,
+  next: NextFunction
+) {
+  const userId = req.auth.userId!;
+  const { interviewDetails } = req.body;
+  const { interviewId } = req.params;
+  console.log("Create Interview ");
+
+  // update tag in tags table
+  try {
+    const interview = await prismadb.interview.update({
+      where: {
+        id: interviewId,
+      },
+      data: {
+        type: interviewDetails.type,
+        format: interviewDetails.format,
+        date: interviewDetails.date,
+        userId: userId,
+        title: interviewDetails.title,
+        location: interviewDetails.location,
+        duration: interviewDetails.duration,
+      },
+      include: {
+        note: true,
         jobApplication: true,
       },
     });
