@@ -20,6 +20,9 @@ import notesRoutes from "./routes/note.routes";
 import companiesRoutes from "./routes/company.routes";
 import contactsRoutes from "./routes/contact.routes";
 import interviewsRoutes from "./routes/interview.routes";
+import myResourcesRoutes from "./routes/myResource.routes";
+import documentsRoutes from "./routes/document.routes";
+import templatesRoutes from "./routes/template.routes";
 
 // so that WithAuthProp<Request> works correctly
 declare global {
@@ -89,6 +92,33 @@ app.use(
   }),
   ClerkLogUserId(),
   applicationsRoutes
+);
+
+app.use(
+  "/api/myResources",
+  ClerkExpressRequireAuth({
+    // ...options
+  }),
+  ClerkLogUserId(),
+  myResourcesRoutes
+);
+
+app.use(
+  "/api/documents",
+  ClerkExpressRequireAuth({
+    // ...options
+  }),
+  ClerkLogUserId(),
+  documentsRoutes
+);
+
+app.use(
+  "/api/templates",
+  ClerkExpressRequireAuth({
+    // ...options
+  }),
+  ClerkLogUserId(),
+  templatesRoutes
 );
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
