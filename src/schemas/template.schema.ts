@@ -4,7 +4,7 @@ export const createTemplateSchema = z.object({
   body: z.object({
     templateDetails: z.object({
       name: z.string(),
-      content: z.string(),
+      content: z.string().max(3200),
       type: z.string(),
     }),
   }),
