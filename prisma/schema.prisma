@@ -188,7 +188,7 @@ model Template {
   userId     String
   name       String
   type       String
-  content    String
+  content    String   @db.VarChar(3200)
   isFavorite Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -198,7 +198,7 @@ model MyResource {
   id         String   @id @default(uuid())
   userId     String
   name       String
-  link       String
+  link       String   @default("")
   image      String // Can be url or can be icon name
   category   String
   isFavorite Boolean  @default(false)

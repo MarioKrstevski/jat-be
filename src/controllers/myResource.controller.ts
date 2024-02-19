@@ -29,14 +29,14 @@ export async function createMyResource(
   next: NextFunction
 ) {
   const userId = req.auth.userId!;
-  const { myResourceInfo } = req.body;
+  const { myResourceDetails } = req.body;
   console.log("Create MyResource  ");
 
   try {
     const myResource = await prismadb.myResource.create({
       data: {
         userId: userId as string,
-        ...myResourceInfo,
+        ...myResourceDetails,
       },
     });
     res.json(myResource);
@@ -53,7 +53,7 @@ export async function editMyResource(
 ) {
   const userId = req.auth.userId!;
   const { myResourceId } = req.params;
-  const { myResourceInfo } = req.body;
+  const { myResourceDetails } = req.body;
   console.log("Edit MyResource  " + myResourceId);
 
   try {
@@ -62,7 +62,7 @@ export async function editMyResource(
         id: myResourceId as string,
       },
       data: {
-        ...myResourceInfo,
+        ...myResourceDetails,
       },
     });
     res.json(myResource);

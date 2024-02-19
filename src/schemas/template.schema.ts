@@ -1,7 +1,13 @@
 import { z } from "zod";
 
 export const createTemplateSchema = z.object({
-  body: z.object({}),
+  body: z.object({
+    templateDetails: z.object({
+      name: z.string(),
+      content: z.string(),
+      type: z.string(),
+    }),
+  }),
 });
 
 export const editTemplateSchema = z.object({

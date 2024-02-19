@@ -29,14 +29,14 @@ export async function createTemplate(
   next: NextFunction
 ) {
   const userId = req.auth.userId!;
-  const { templateInfo } = req.body;
+  const { templateDetails } = req.body;
   console.log("Create Template  ");
 
   try {
     const template = await prismadb.template.create({
       data: {
         userId: userId as string,
-        ...templateInfo,
+        ...templateDetails,
       },
     });
     res.json(template);
@@ -53,7 +53,7 @@ export async function editTemplate(
 ) {
   const userId = req.auth.userId!;
   const { templateId } = req.params;
-  const { templateInfo } = req.body;
+  const { templateDetails } = req.body;
   console.log("Edit Template  " + templateId);
 
   try {
@@ -62,7 +62,7 @@ export async function editTemplate(
         id: templateId as string,
       },
       data: {
-        ...templateInfo,
+        ...templateDetails,
       },
     });
     res.json(template);
