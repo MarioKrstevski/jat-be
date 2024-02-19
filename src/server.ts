@@ -41,85 +41,20 @@ app.use(
   })
 );
 
-app.use(
-  "/api/tags",
-  ClerkExpressRequireAuth({
-    // ...options
-  }),
-  ClerkLogUserId(),
-  tagsRoutes
-);
+const authMiddleware =
+  ClerkExpressRequireAuth({}) && ClerkLogUserId(); // Combine middleware
+app.use("/api", authMiddleware);
 
-app.use(
-  "/api/interviews",
-  ClerkExpressRequireAuth({
-    // ...options
-  }),
-  ClerkLogUserId(),
-  interviewsRoutes
-);
-app.use(
-  "/api/contacts",
-  ClerkExpressRequireAuth({
-    // ...options
-  }),
-  ClerkLogUserId(),
-  contactsRoutes
-);
+app.use("/api/tags", tagsRoutes);
+app.use("/api/interviews", interviewsRoutes);
+app.use("/api/contacts", contactsRoutes);
+app.use("/api/companies", companiesRoutes);
+app.use("/api/notes", notesRoutes);
+app.use("/api/applications", applicationsRoutes);
+app.use("/api/myResources", myResourcesRoutes);
+app.use("/api/documents", documentsRoutes);
+app.use("/api/templates", templatesRoutes);
 
-app.use(
-  "/api/companies",
-  ClerkExpressRequireAuth({
-    // ...options
-  }),
-  ClerkLogUserId(),
-  companiesRoutes
-);
-
-app.use(
-  "/api/notes",
-  ClerkExpressRequireAuth({
-    // ...options
-  }),
-  ClerkLogUserId(),
-  notesRoutes
-);
-
-app.use(
-  "/api/applications",
-  ClerkExpressRequireAuth({
-    // ...options
-  }),
-  ClerkLogUserId(),
-  applicationsRoutes
-);
-
-app.use(
-  "/api/myResources",
-  ClerkExpressRequireAuth({
-    // ...options
-  }),
-  ClerkLogUserId(),
-  myResourcesRoutes
-);
-
-app.use(
-  "/api/documents",
-  ClerkExpressRequireAuth({
-    // ...options
-  }),
-  ClerkLogUserId(),
-  documentsRoutes
-);
-
-app.use(
-  "/api/templates",
-  ClerkExpressRequireAuth({
-    // ...options
-  }),
-  ClerkLogUserId(),
-  templatesRoutes
-);
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
