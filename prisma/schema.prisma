@@ -149,6 +149,7 @@ model JobApplication {
   interviews            Interview[]
   contacts              Contact[]
   contactId             String?
+  document              Document[]
 
   @@index([companyId])
   @@index([id])
@@ -167,4 +168,40 @@ model Note {
   contact          Contact?
   interviewId      String?
   interview        Interview?
+}
+
+model Document {
+  id           String           @id @default(uuid())
+  userId       String
+  label        String
+  type         String
+  extension    String
+  applications JobApplication[]
+  link         String
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  isFavorite   Boolean          @default(false) // will serve as a isPinned flag
+}
+
+model Template {
+  id         String   @id @default(uuid())
+  userId     String
+  name       String
+  type       String
+  content    String
+  isFavorite Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model MyResource {
+  id         String   @id @default(uuid())
+  userId     String
+  name       String
+  link       String
+  image      String // Can be url or can be icon name
+  category   String
+  isFavorite Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }

@@ -41,3 +41,9 @@ export const editInterviewSchema = z.object({
     }),
   }),
 });
+
+export const deleteInterviewSchema = z.object({
+  params: z.object({
+    interviewId: z.string(),
+  }),
+});

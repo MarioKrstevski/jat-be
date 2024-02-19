@@ -96,7 +96,7 @@ export async function editInterview(
   const userId = req.auth.userId!;
   const { interviewDetails } = req.body;
   const { interviewId } = req.params;
-  console.log("Create Interview ");
+  console.log("Edit Interview ");
 
   // update tag in tags table
   try {
@@ -121,7 +121,31 @@ export async function editInterview(
 
     res.json(interview);
   } catch (error) {
-    console.error("Error creating interview:", error);
+    console.error("Error edit interview:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+export async function deleteInterview(
+  req: WithAuthProp<Request>,
+  res: Response,
+  next: NextFunction
+) {
+  const userId = req.auth.userId!;
+  const { interviewId } = req.params;
+  console.log("Delete Interview ");
+
+  // update tag in tags table
+  try {
+    const interview = await prismadb.interview.delete({
+      where: {
+        id: interviewId,
+      },
+    });
+
+    res.json(interview);
+  } catch (error) {
+    console.error("Error deleting interview:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
