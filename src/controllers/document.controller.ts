@@ -29,14 +29,14 @@ export async function createDocument(
   next: NextFunction
 ) {
   const userId = req.auth.userId!;
-  const { documentInfo } = req.body;
+  const { documentDetails } = req.body;
   console.log("Create Document  ");
 
   try {
     const document = await prismadb.document.create({
       data: {
         userId: userId as string,
-        ...documentInfo,
+        ...documentDetails,
       },
     });
     res.json(document);
@@ -53,7 +53,7 @@ export async function editDocument(
 ) {
   const userId = req.auth.userId!;
   const { documentId } = req.params;
-  const { documentInfo } = req.body;
+  const { documentDetails } = req.body;
   console.log("Edit Document  " + documentId);
 
   try {
@@ -62,7 +62,7 @@ export async function editDocument(
         id: documentId as string,
       },
       data: {
-        ...documentInfo,
+        ...documentDetails,
       },
     });
     res.json(document);

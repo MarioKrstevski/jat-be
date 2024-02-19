@@ -40,10 +40,8 @@ app.use(
     origin: "*",
   })
 );
-
-const authMiddleware =
-  ClerkExpressRequireAuth({}) && ClerkLogUserId(); // Combine middleware
-app.use("/api", authMiddleware);
+// Combine middleware
+app.use("/api", ClerkExpressRequireAuth({}), ClerkLogUserId());
 
 app.use("/api/tags", tagsRoutes);
 app.use("/api/interviews", interviewsRoutes);
