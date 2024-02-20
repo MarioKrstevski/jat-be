@@ -165,7 +165,7 @@ export async function getApplication(
   try {
     const jobApplications = await prismadb.jobApplication.findFirst({
       where: {
-        userId: userId,
+        id: applicationId,
       },
       include: {
         note: true,
