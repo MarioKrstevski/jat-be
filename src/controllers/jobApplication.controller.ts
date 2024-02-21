@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import prismadb from "../prismadb";
+import prismadb from "../configs/prismadb";
 import { EditTypes } from "../types";
 import { WithAuthProp } from "@clerk/clerk-sdk-node";
 import { generateShortId } from "../utils/lib";

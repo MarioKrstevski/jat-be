@@ -1,6 +1,6 @@
 import { WithAuthProp } from "@clerk/clerk-sdk-node";
 import { NextFunction, Request, Response } from "express";
-import prismadb from "../prismadb";
+import prismadb from "../configs/prismadb";
 
 export async function editNote(
   req: WithAuthProp<Request>,
